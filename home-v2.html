@@ -15,42 +15,66 @@
   <link rel="stylesheet" href="assets/css/fontawesome.min.css">
   <link rel="stylesheet" href="assets/css/animate.css">
   <link rel="stylesheet" href="assets/css/slick.min.css">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=intro10">
   <link rel="stylesheet" href="assets/css/animations.css">
 </head>
 
 <body>
-  <div class="cs_preloader cs_accent_color">
+    <div class="cs_preloader cs_preloader--cinematic" id="jujcoIntro" aria-hidden="true">
     <div class="cs_preloader_in">
-      <video class="cs_preloader_video" src="assets/preloader/Preload1.mp4" muted autoplay playsinline
-        disableRemotePlayback preload="auto" webkit-playsinline
-        x5-video-orientation-change-disable></video>
+      <div class="jujco-cine">
+        <span class="jujco-cine__bar jujco-cine__bar--top"></span>
+        <span class="jujco-cine__bar jujco-cine__bar--bot"></span>
+        <span class="jujco-cine__glow jujco-cine__glow--cool"></span>
+        <span class="jujco-cine__glow jujco-cine__glow--heat"></span>
+        <span class="jujco-cine__line"></span>
+        <div class="jujco-cine__stage">
+          <div class="jujco-cine__logo">
+            <img class="jujco-cine__trail" src="assets/img/favicon.png" alt="">
+            <img class="jujco-cine__fan" src="assets/img/favicon.png" alt="">
+            <span class="jujco-cine__boom"></span>
+          </div>
+          <p class="jujco-cine__title">
+            <span class="jujco-cine__welcome">Welcome to</span>
+            <span class="jujco-cine__name">JUJCO</span>
+            <span class="jujco-cine__rule"></span>
+            <span class="jujco-cine__sub">Heating and Cooling</span>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
-  <!-- Start Header Section -->
+  <script src="assets/js/intro.js?v=intro7"></script>
+<!-- Start Header Section -->
   <header class="cs_site_header cs_style_1 cs_type_1 cs_heading_color cs_sticky_header">
     <div class="cs_main_header">
       <div class="container">
         <div class="cs_main_header_in">
           <div class="cs_main_header_left">
-            <a class="cs_site_branding" href="index-2.html">
-              <img src="assets/img/logo.png" alt="Logo">
+            <a class="cs_site_branding" href="index.html">
+              <img src="assets/img/logo-lockup.png" alt="JUJCO Heating &amp; Cooling">
             </a>
             <div class="cs_nav">
               <ul class="cs_nav_list">
                 <li class="menu-item-has-children">
-                  <a href="index-2.html">Home</a>
+                  <a href="index.html">Home</a>
                   <ul>
-                    <li><a href="index-2.html">Home V1</a></li>
-                    <li><a href="home-v2.html">Home V2</a></li>
+                    <li><a href="index.html">Home 1</a></li>
+                    <li><a href="home-v2.html">Home 2</a></li>
                   </ul>
                 </li>
                 <li><a href="about-us.html">About Us</a></li>
                 <li class="menu-item-has-children">
                   <a href="service.html">Services</a>
                   <ul>
-                    <li><a href="service.html">Services</a></li>
-                    <li><a href="service-details.html">Service Details</a></li>
+                    <li><a href="service.html">All Services</a></li>
+                    <li><a href="service-ac-installation.html">AC Installation</a></li>
+                    <li><a href="service-ac-repair-maintenance.html">AC Repair</a></li>
+                    <li><a href="service-heating-system-repair.html">Heating Repair</a></li>
+                    <li><a href="service-air-duct-cleaning.html">Air Duct Cleaning</a></li>
+                    <li><a href="service-indoor-air-quality.html">Indoor Air Quality</a></li>
+                    <li><a href="service-emergency-service.html">Emergency Service</a></li>
+                    <li><a href="service-maintenance-tune-ups.html">Maintenance Tune-Ups</a></li>
                   </ul>
                 </li>
                 <li class="menu-item-has-children">
@@ -1453,19 +1477,19 @@
             <div class="cs_height_45 cs_height_lg_45"></div>
             <form action="#" class="cs_get_quote_form row cs_gap_y_30">
               <div class="col-sm-6">
-                <input type="text" class="cs_form_field" placeholder="Your Name">
+                <input type="text" class="cs_form_field" name="name" placeholder="Your Name">
               </div>
               <div class="col-sm-6">
-                <input type="text" class="cs_form_field" placeholder="Last Name">
+                <input type="text" class="cs_form_field" name="lastname" placeholder="Last Name">
               </div>
               <div class="col-sm-6">
-                <input type="text" class="cs_form_field" placeholder="Your Email">
+                <input type="email" class="cs_form_field" name="email" placeholder="Your Email">
               </div>
               <div class="col-sm-6">
-                <input type="text" class="cs_form_field" placeholder="Subject">
+                <input type="text" class="cs_form_field" name="subject" placeholder="Subject">
               </div>
               <div class="col-lg-12">
-                <textarea class="cs_form_field" cols="30" rows="4" placeholder="Write Message..."></textarea>
+                <textarea class="cs_form_field" name="message" cols="30" rows="4" placeholder="Write Message..."></textarea>
               </div>
               <div class="col-lg-12">
                 <button type="submit" class="cs_btn cs_style_1 w-100">
@@ -2110,7 +2134,7 @@
           <div class="cs_footer_col">
             <div class="cs_footer_widget">
               <div class="cs_text_widget">
-                <img src="assets/img/footer_logo_2.svg" alt="Logo">
+                <img src="assets/img/logo-lockup.png" alt="JUJCO Heating &amp; Cooling">
                 <p>Upgrading existing systems with newer more energy-efficient models to reduce energy consumption and
                   lower utility.</p>
               </div>
@@ -2139,11 +2163,11 @@
                 <span class="cs_white_bg"></span>
               </div>
               <ul class="cs_footer_menu_2">
-                <li><a href="service-details.html">Furnace Installation</a></li>
-                <li><a href="service-details.html">Air Duct Cleaning</a></li>
-                <li><a href="service-details.html">Heating Repair</a></li>
-                <li><a href="service-details.html">24/7 Emergency Service</a></li>
-                <li><a href="service-details.html">Indoor Air Quality</a></li>
+                <li><a href="service-ac-installation.html">AC Installation</a></li>
+                <li><a href="service-air-duct-cleaning.html">Air Duct Cleaning</a></li>
+                <li><a href="service-heating-system-repair.html">Heating Repair</a></li>
+                <li><a href="service-emergency-service.html">24/7 Emergency Service</a></li>
+                <li><a href="service-indoor-air-quality.html">Indoor Air Quality</a></li>
               </ul>
             </div>
           </div>
@@ -2156,7 +2180,7 @@
                 <span class="cs_white_bg"></span>
               </div>
               <ul class="cs_footer_menu_2">
-                <li><a href="index-2.html">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="about-us.html">About </a></li>
                 <li><a href="service.html">Services</a></li>
                 <li><a href="blog.html">Blog</a></li>
@@ -2174,7 +2198,7 @@
               </div>
               <form action="#" class="cs_footer_newsletter">
                 <p class="cs_mb_20">Sign Up to get updates & news about</p>
-                <input type="text" placeholder="Enter your email" class="cs_form_field">
+                <input type="email" name="email" placeholder="Enter your email" class="cs_form_field" required>
                 <button type="submit" class="cs_btn cs_style_1 w-100"><span>SUBSCRIBE</span></button>
               </form>
             </div>
@@ -2185,7 +2209,7 @@
     <div class="cs_footer_bottom cs_white_color">
       <div class="container">
         <div class="cs_footer_bottom_in">
-          <div class="cs_footer_copyright">Copyright@ 2024 <a href="index.html">JUJCO Heating & Cooling HVAC</a>. All
+          <div class="cs_footer_copyright">Copyright © 2026 <a href="index.html">JUJCO Heating & Cooling HVAC</a>. All
             Rights Reserved.</div>
           <ul class="cs_footer_menu cs_mp_0">
             <li><a href="privacy.html">Privacy Policy</a></li>
@@ -2197,23 +2221,17 @@
   </footer>
   <!-- End Footer -->
   <!-- Script -->
-  <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script src="assets/js/jquery-3.6.0.min.js"></script>
   <script src="assets/js/wow.min.js"></script>
   <script src="assets/js/jquery.slick.min.js"></script>
-  <script src="assets/js/main.js"></script>
+  <script src="assets/js/main.js?v=intro8"></script>
   <!-- Bento fullscreen overlay (click any bento image to expand) -->
   <div class="jujco-bento-overlay" id="jujcoBentoOverlay">
     <button class="jujco-bento-close" aria-label="Close">&times;</button>
-    <img src="" alt="Expanded view">
+    <img alt="Expanded view">
   </div>
   <script src="assets/js/jujco-anim2.js"></script>
   <script src="assets/js/animations.js"></script>
-  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a188a2bf0a7ce1d4',t:'MTc4MzYxMzgxMw=='};var a=document.createElement('script');a.src='../cdn-cgi/challenge-platform/h/b/scripts/jsd/80a697ecdece/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496"
-    integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ=="
-    data-cf-beacon='{"version":"2024.11.0","token":"6f756f02820545e3be40ddc6eb6154c3","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
-    crossorigin="anonymous"></script>
   <!-- Floating Emergency Call Button -->
   <a href="tel:+17809822577" class="cs_emergency_btn" aria-label="Call JUJCO Emergency HVAC">
     <span class="cs_emergency_icon">
