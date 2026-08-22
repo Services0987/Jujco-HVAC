@@ -30,7 +30,6 @@
     tabs();
     progressBar();
     review();
-    initForms();
     pageTransitions();
 
     if ($.exists('.wow')) {
@@ -42,57 +41,95 @@
   });
 
   /*--------------------------------------------------------------
-    1. Preloader — cinematic logo intro (preload1) / swirl spinner (preload2)
+    1. Preloader (Advanced Video Support with 2X Speed & Conditional Display)
   --------------------------------------------------------------*/
   function initVideoPreloader() {
-    /* intro.js owns the overlay. This is only a fallback if that file did not run. */
-    if (window.__jujcoIntro) return;
-    var preloader = document.querySelector('.cs_preloader');
-    if (!preloader) return;
-    window.__jujcoIntro = true;
-    document.documentElement.classList.add('cs_intro_lock');
-    document.body.classList.add('cs_intro_lock');
-    var reduceMotion = window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var isCinematic = preloader.classList.contains('cs_preloader--cinematic');
-    var done = false;
-    function finish() {
-      if (done) return;
-      done = true;
-      preloader.classList.add('is-out');
-      window.setTimeout(function () {
-        if (preloader.parentNode) preloader.parentNode.removeChild(preloader);
-        document.documentElement.classList.remove('cs_intro_lock');
-        document.body.classList.remove('cs_intro_lock');
-      }, 420);
-    }
-    if (reduceMotion) {
-      preloader.classList.add('is-title');
-      window.setTimeout(finish, 450);
-    } else if (isCinematic) {
-      window.setTimeout(function () { preloader.classList.add('is-title'); }, 1250);
-      window.setTimeout(finish, 3050);
+    var $preloader = $('.cs_preloader');
+    if (!$preloader.length) return;
+
+    // Check if this is a main page (where the video preloader should display)
+    // Main pages: index.html, index-2.html, home-v2.html
+    var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    var isMainPage = /^(index\.html|index-2\.html|home-v2\.html)$/.test(currentPage);
+
+    // Lock body scroll while any preloader is visible
+    $('body').css('overflow', 'hidden');
+
+    if (isMainPage) {
+      var $video = $preloader.find('video');
+
+      // Remove poster attribute for faster loading
+      $video.removeAttr('poster');
+
+      if ($video.length) {
+        var video = $video[0];
+
+        // CRITICAL: Force every possible attribute to bypass mobile autoplay restrictions
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.setAttribute('muted', '');
+        video.playbackRate = 2.3;
+
+        var hasHidden = false;
+        var triggerHide = function () {
+          if (!hasHidden) {
+            hasHidden = true;
+            hidePreloader();
+          }
+        };
+
+        video.addEventListener('timeupdate', function () {
+          // Because the video is playing at 2.3x speed, the timeupdate event (which fires ~every 250ms)
+          // might skip over a small window. We widen the window to 1.0s to guarantee it catches
+          // the end before the HTML loop attribute restarts the video.
+          if (video.duration > 0 && video.currentTime >= video.duration - 1.0) {
+            triggerHide();
+          }
+        });
+
+        // Aggressively attempt to play
+        var p = video.play();
+        if (p !== undefined) {
+          p.catch(function (e) {
+            // If the browser absolutely blocks it (e.g. iOS Low Power Mode),
+            // hide immediately so the user isn't stuck staring at a frozen frame.
+            triggerHide();
+          });
+        }
+
+        // Hard timeout fallback
+        setTimeout(triggerHide, 6000);
+      } else {
+        // Fallback for non-video preloaders
+        setTimeout(hidePreloader, 2000);
+      }
     } else {
-      window.setTimeout(finish, 1250);
+      // Non-main pages: show the spinning favicon preloader for exactly 1 second
+      setTimeout(hidePreloader, 1000);
     }
-    preloader.addEventListener('click', finish);
-    window.setTimeout(finish, 5200);
   }
 
   function hidePreloader() {
-    var preloader = document.querySelector('.cs_preloader');
+    var $preloaderIn = $('.cs_preloader_in');
+    var $preloader = $('.cs_preloader');
+
+    // Stop the electrical-vibes animation loop as soon as the preloader begins hiding
     $(document).trigger('preloader:hidden');
-    if (!preloader) {
-      document.documentElement.classList.remove('cs_intro_lock');
-      document.body.classList.remove('cs_intro_lock');
-      return;
+
+    if ($preloaderIn.length) {
+      $preloaderIn.delay(150).fadeOut('slow', function () {
+        $preloader.fadeOut('slow', function () {
+          $('body').css('overflow', ''); // Restore scrolling
+        });
+      });
+    } else {
+      $preloader.fadeOut('slow', function () {
+        $('body').css('overflow', ''); // Restore scrolling
+      });
     }
-    preloader.classList.add('is-out');
-    window.setTimeout(function () {
-      if (preloader.parentNode) preloader.parentNode.removeChild(preloader);
-      document.documentElement.classList.remove('cs_intro_lock');
-      document.body.classList.remove('cs_intro_lock');
-    }, 720);
   }
 
   /*--------------------------------------------------------------
@@ -458,30 +495,28 @@
         });
       });
     }
-    if ($.exists('.cs_service_product_thumb') && $.exists('.cs_service_product_nav')) {
-      $('.cs_service_product_thumb').slick({
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-        asNavFor: '.cs_service_product_nav',
-        appendDots: $('.cs_pagination_2'),
-      });
+    $('.cs_service_product_thumb').slick({
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      arrows: false,
+      asNavFor: '.cs_service_product_nav',
+      appendDots: $('.cs_pagination_2'),
+    });
 
-      $('.cs_service_product_nav').slick({
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        asNavFor: '.cs_service_product_thumb',
-        focusOnSelect: true,
-        prevArrow: $('.cs_service_product_nav_left_arrow'),
-        nextArrow: $('.cs_service_product_nav_right_arrow'),
-        responsive: [
-          { breakpoint: 1400, settings: { slidesToShow: 4 } },
-          { breakpoint: 1199, settings: { slidesToShow: 3 } },
-          { breakpoint: 991, settings: { slidesToShow: 2 } },
-          { breakpoint: 575, settings: { slidesToShow: 1 } },
-        ],
-      });
-    }
+    $('.cs_service_product_nav').slick({
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      asNavFor: '.cs_service_product_thumb',
+      focusOnSelect: true,
+      prevArrow: $('.cs_service_product_nav_left_arrow'),
+      nextArrow: $('.cs_service_product_nav_right_arrow'),
+      responsive: [
+        { breakpoint: 1400, settings: { slidesToShow: 4 } },
+        { breakpoint: 1199, settings: { slidesToShow: 3 } },
+        { breakpoint: 991, settings: { slidesToShow: 2 } },
+        { breakpoint: 575, settings: { slidesToShow: 1 } },
+      ],
+    });
   }
 
   /*--------------------------------------------------------------
@@ -530,13 +565,20 @@
     $('.cs_accordian').children('.cs_accordian_body').hide();
     $('.cs_accordian.active').children('.cs_accordian_body').show();
     $('.cs_accordian_head').on('click', function () {
-      var $item = $(this).parent('.cs_accordian');
-      if ($item.hasClass('active')) {
-        $item.removeClass('active').children('.cs_accordian_body').slideUp(250);
-        return;
-      }
-      $item.siblings().removeClass('active').children('.cs_accordian_body').slideUp(250);
-      $item.addClass('active').children('.cs_accordian_body').slideDown(250);
+      $(this)
+        .parent('.cs_accordian')
+        .siblings()
+        .children('.cs_accordian_body')
+        .slideUp(250);
+      $(this).siblings().slideDown(250);
+      $(this)
+        .parent()
+        .parent()
+        .siblings()
+        .find('.cs_accordian_body')
+        .slideUp(250);
+      $(this).parents('.cs_accordian').addClass('active');
+      $(this).parent('.cs_accordian').siblings().removeClass('active');
     });
   }
 
@@ -545,14 +587,13 @@
   --------------------------------------------------------------*/
   function tabs() {
     $('.cs_tabs .cs_tab_links a').on('click', function (e) {
-      e.preventDefault();
       var currentAttrValue = $(this).attr('href');
-      if (!currentAttrValue || currentAttrValue.charAt(0) !== '#') return;
       $('.cs_tabs ' + currentAttrValue)
         .fadeIn(400)
         .siblings()
         .hide();
       $(this).parents('li').addClass('active').siblings().removeClass('active');
+      e.preventDefault();
     });
   }
 
@@ -581,107 +622,54 @@
     11. Page Transitions (Creative fast transitions for non-preload links)
   --------------------------------------------------------------*/
   function pageTransitions() {
-    /* Intentionally empty. The previous overlay delayed every click by 400ms
-       and stacked with the page preloader, which made navigation feel stuck. */
-  }
+    var transitionTypes = [
+      'transition-wipe-left',
+      'transition-wipe-right',
+      'transition-expand-circle',
+      'transition-diagonal-wipe',
+      'transition-fade-blur',
+      'transition-slide-down'
+    ];
+    var currentTransitionIndex = 0;
 
-  function initForms() {
-    function field($form, name, placeholderPart) {
-      var $el = $form.find('[name="' + name + '"]');
-      if ($el.length) return ($el.val() || '').trim();
-      var $ph = $form.find('input, textarea').filter(function () {
-        var p = ($(this).attr('placeholder') || '').toLowerCase();
-        return p.indexOf(placeholderPart) !== -1;
-      }).first();
-      return ($ph.val() || '').trim();
-    }
+    // Bind to non-menu navigation links (not main menu or footer links to main pages)
+    $(document).on('click', 'a:not([href*="index-2.html"]):not([href*="home-v2.html"]):not([href*="service.html"]):not([href*="#"]):not([target="_blank"])', function (e) {
+      var $link = $(this);
+      var href = $link.attr('href');
 
-    function mailtoLead(data) {
-      var body = [
-        'New website inquiry — JUJCO Heating & Cooling',
-        '',
-        'Name: ' + (data.name || '—'),
-        'Email: ' + (data.email || '—'),
-        'Phone: ' + (data.phone || '—'),
-        'Service: ' + (data.service || '—'),
-        '',
-        data.message || ''
-      ].join('\n');
-      var url = 'mailto:info@jujcohvac.com?subject=' +
-        encodeURIComponent(data.subject || 'Website inquiry') +
-        '&body=' + encodeURIComponent(body);
-      window.location.href = url;
-    }
+      // Skip if it's an email or phone link
+      if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) {
+        return;
+      }
 
-    $(document).on('submit', '#contactForm, .cs_get_quote_form, .cs_lead_form, .cs_footer_newsletter, .cs_search_form', function (e) {
+      // Skip external links
+      if (href.indexOf('http') === 0 && href.indexOf(window.location.hostname) === -1) {
+        return;
+      }
+
+      // Skip if preloader will show (main pages)
+      var mainPages = ['index.html', 'index-2.html', 'home-v2.html', 'service.html', 'about-us.html', 'contact.html', 'blog.html', 'projects.html', 'team.html'];
+      var isMainPage = mainPages.some(function (page) {
+        return href.indexOf(page) !== -1;
+      });
+
+      if (isMainPage) {
+        return; // Let preloader handle it
+      }
+
       e.preventDefault();
-      var $form = $(this);
 
-      if ($form.hasClass('cs_search_form')) {
-        var q = ($form.find('input').val() || '').trim();
-        window.location.href = q ? ('blog.html?q=' + encodeURIComponent(q)) : 'blog.html';
-        return;
-      }
+      // Create transition overlay with alternating effects
+      var transitionClass = transitionTypes[currentTransitionIndex % transitionTypes.length];
+      currentTransitionIndex++;
 
-      if ($form.hasClass('cs_footer_newsletter')) {
-        var newsEmail = field($form, 'email', 'email');
-        if (!newsEmail) {
-          alert('Please enter your email address.');
-          return;
-        }
-        mailtoLead({
-          name: 'Newsletter',
-          email: newsEmail,
-          subject: 'Newsletter signup',
-          message: 'Please add this email to the JUJCO newsletter list.'
-        });
-        return;
-      }
+      var $overlay = $('<div class="page-transition-overlay ' + transitionClass + '"></div>');
+      $('body').append($overlay);
 
-      var data = {
-        name: field($form, 'name', 'name'),
-        email: field($form, 'email', 'email'),
-        phone: field($form, 'phone', 'phone'),
-        service: field($form, 'service', 'service'),
-        message: field($form, 'message', 'message') || field($form, 'message', 'write'),
-        subject: field($form, 'subject', 'subject') || 'Appointment request'
-      };
-
-      if ($form.find('[required]').length) {
-        var ok = true;
-        $form.find('[required]').each(function () {
-          if (!$(this).val()) ok = false;
-        });
-        if (!ok) {
-          alert('Please fill in the required fields.');
-          return;
-        }
-      }
-
-      if (window.fetch && $form.attr('id') === 'contactForm') {
-        var formData = new FormData(this);
-        formData.append('_captcha', 'false');
-        fetch('https://formsubmit.co/ajax/info@jujcohvac.com', { method: 'POST', body: formData })
-          .then(function (res) {
-            if (res.ok) {
-              alert('Thank you. Your request was sent. We will contact you shortly.');
-              $form[0].reset();
-            } else {
-              mailtoLead(data);
-            }
-          })
-          .catch(function () { mailtoLead(data); });
-        return;
-      }
-
-      mailtoLead(data);
-    });
-
-    $(document).on('submit', 'form[action="#"]', function (e) {
-      if ($(this).is('#contactForm, .cs_get_quote_form, .cs_lead_form, .cs_footer_newsletter, .cs_search_form')) {
-        return;
-      }
-      e.preventDefault();
+      // Navigate after transition starts
+      setTimeout(function () {
+        window.location.href = href;
+      }, 400); // 400ms gives enough time for transition to be visible
     });
   }
 })(jQuery); // End of use strict
@@ -690,7 +678,7 @@
 (function () {
   'use strict';
   function jujcoInit() {
-    var tilt = '.cs_pricing_plan, .cs_team_member, .cs_post, .cs_project_card, .cs_card, .cs_iconbox';
+    var tilt = '.cs_service_card, .cs_pricing_plan, .cs_team_member, .cs_post, .cs_project_card, .cs_card, .cs_iconbox';
     var reveal = '.cs_service_card, .cs_pricing_plan, .cs_team_member, .cs_post, .cs_project_card, .cs_card, .cs_iconbox, .cs_section_heading, .cs_cta, .cs_faq, .cs_contact_info, .cs_work_step';
     var supportsIO = ('IntersectionObserver' in window);
     var io = null;
